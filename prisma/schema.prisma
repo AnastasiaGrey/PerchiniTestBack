@@ -17,16 +17,14 @@ datasource db {
 model Employee{
   id String @id@default(uuid())
   name String
-  phone_number String @unique
-  post String 
-  test_id String
-  test Test @relation(fields: [test_id], references: [id])
+  email String @unique
+  password String
   results Results[]
 }
 
 model Manager{
   id String @id@default(uuid())
-  name String
+  name String 
   phone_number String @unique
   test Test[]
 }
@@ -48,8 +46,7 @@ model Test{
   manager Manager @relation(fields: [manager_id], references: [id])
   question_id String
   results Results[]
-  employee Employee[]
-}
+  }
 
 model Question{
   id String @id@default(uuid())
