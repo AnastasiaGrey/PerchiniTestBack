@@ -25,8 +25,9 @@ model Employee{
 model Manager{
   id String @id@default(uuid())
   name String 
-  phone_number String @unique
+  email String @unique
   test Test[]
+  password String
 }
 
 model Results{
@@ -42,9 +43,10 @@ model Results{
 
 model Test{
   id String @id@default(uuid())
+  name String
   manager_id String
   manager Manager @relation(fields: [manager_id], references: [id])
-  question_id String
+  question Question[]
   results Results[]
   }
 
@@ -52,6 +54,8 @@ model Question{
   id String @id@default(uuid())
   question String
   variants Variants[]
+  test_id String
+  test Test @relation(fields: [test_id], references: [id])
 }
 
 model Variants{
