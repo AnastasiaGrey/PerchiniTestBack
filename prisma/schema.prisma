@@ -48,20 +48,20 @@ model Test{
   manager Manager @relation(fields: [manager_id], references: [id])
   question Question[]
   results Results[]
-  }
+}
 
 model Question{
   id String @id@default(uuid())
   question String
   variants Variants[]
   test_id String
-  test Test @relation(fields: [test_id], references: [id])
+  test Test @relation(fields: [test_id], references: [id], onDelete: Cascade)
 }
 
 model Variants{
   id String @id@default(uuid())
   question_id String
-  question Question @relation(fields: [question_id], references: [id])
+  question Question @relation(fields: [question_id], references: [id], onDelete: Cascade)
   variant String
   status String
 }

@@ -54,4 +54,24 @@ export class QuestionsService {
     })
     return questions
   }
+  async deleteQuestion(question_id: string) {
+    const question = await this.prisma.test.delete({
+      where: {
+        id: question_id,
+      },
+    })
+
+    return question
+  }
+  async updateQuestion(test_id: string, updateQuestionDto: UpdateQuestionDto) {
+    const question = await this.prisma.test.update({
+      where: {
+        id: test_id,
+      },
+      data: {
+        name: updateQuestionDto.test_name,
+      },
+    })
+    return question
+  }
 }
