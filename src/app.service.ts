@@ -13,7 +13,7 @@ export class AppService {
       secure: true,
       auth: {
           user: 'smirn077@mail.ru',
-          pass: '3uvFgTzPmixkjZYv4vgV',
+          pass: '42XZLRropTVS9mjD8laj',
       },
     })
     const mailOptions = {
@@ -31,5 +31,33 @@ export class AppService {
   };
   
   transpoter.sendMail(mailOptions);
+}
+
+async sendMailsNewTest(from:string, to:string, subject:string, text:string){
+  const nodemailer = require('nodemailer')
+    const transpoter = nodemailer.createTransport({
+      host: 'smtp.mail.ru',
+      port: 465,
+      secure: true,
+      auth: {
+        user: 'smirn077@mail.ru',
+        pass: '42XZLRropTVS9mjD8laj',
+      },
+    })
+    const mailOptions = {
+      from: from,
+      to: to,
+      subject: subject,
+      html: `
+      <div>
+        <h1>Перчини Тест</h1>
+        <p>Менеджер добавил новый тест в систему ${text}<p>
+        <div>
+          <p>Скорее начните прохождение нового теста</p>
+        </div>
+      </div>`
+  };
+  await transpoter.sendMail(mailOptions)
+
 }
 }

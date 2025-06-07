@@ -14,20 +14,27 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Employee{
-  id String @id@default(uuid())
+model User{
+  id String @id @default(uuid())
   name String
   email String @unique
   password String
+  employee Employee? 
+  manager Manager?
+
+}
+model Employee{
+  id String @id @default(uuid())
+  userId String @unique
+  user User @relation(fields: [userId], references: [id])
   results Results[]
 }
 
 model Manager{
   id String @id@default(uuid())
-  name String 
-  email String @unique
   test Test[]
-  password String
+  userId String @unique
+  user User @relation(fields: [userId], references: [id])
 }
 
 model Results{

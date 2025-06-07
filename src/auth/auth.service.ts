@@ -18,47 +18,66 @@ export class AuthService {
         const password = randomBytes(12).toString('base64').slice(0, 12);
         const salt = 10
         const hashed = await hash(password, salt)
-        console.log (hashed)
         
-        if (role === 'Waiter'){
-            const user_waiter = await this.prisma.employee.findUnique({
-                where:{
-                    email: email,
-                }
-            });
-        if (user_waiter){
-            throw new BadRequestException("Сотрудник с таким email уже есть")
-        }
-        }
-        if (role === 'Manager'){
-            const user_manager = await this.prisma.manager.findUnique({
-                where:{
-                    email: email,
-                }
-            });
-            if (user_manager){
-                throw new BadRequestException("Сотрудник с таким email уже есть")
+        const user = await this.prisma.user.findUnique({
+            where:{
+                email: email,
             }
-            const new_user = await this.prisma.manager.create({
+        });
+        if(user){
+            throw new BadRequestException("Сотрудник с таким email уже есть")
+
+        }
+        let new_user
+        if (role=='Manager'){
+            new_user = await this.prisma.user.create({
                 data:{
-                    email,
-                    name,
-                    password:hashed
+                    email: email,
+                    password:hashed,
+                    name: name,
+                    manager:{
+                        create:{
+
+                        }
+                    }
                 }
+                
             })
-            if(new_user){
-                await this.AppService.sendMail('smirn077@mail.ru', new_user.email, 'Пароль для доступа к Перчини Тест', password)
-                }      
-            return {...new_user, unhashed:password}}
+        }
+        else{
+            new_user = await this.prisma.user.create({
+                data:{
+                    email: email,
+                    password:hashed,
+                    name: name,
+                    employee:{
+                        create:{
+
+                        }
+                    }
+                }
+                
+            })
+        }
+        
+        
+        if(new_user){
+            await this.AppService.sendMail('smirn077@mail.ru', new_user.email, 'Пароль для доступа к Перчини Тест', password)
+            }      
+        return {...new_user, unhashed:password}
         }
 
     async Login(email:string, password:string){
-    const user = await this.prisma.employee.findUnique({
+    const user = await this.prisma.user.findUnique({
         where:{
             email
+        },
+        include:{
+            manager:true,
+            employee:true
         }
     })
-
+    console.log(user)
     if(!user){
         throw new BadRequestException("Сотрудник не найден")
     }
@@ -69,7 +88,7 @@ export class AuthService {
         const acessToken=sign({ data:user }, secret, {expiresIn: 60 * 60})
         const refreshToken=sign({ data:user }, secret, {expiresIn: 60 * 60*24})
 
-        return {acessToken, refreshToken}
+        return {acessToken, refreshToken, user}
     }
 
     throw new BadRequestException("Неправильный логин или пароль")

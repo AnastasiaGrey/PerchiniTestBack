@@ -41,11 +41,53 @@ export class ResultsService {
         return result
     }
     async getResults(employee_id: string) {
+        console.log(employee_id)
         const results = await this.prisma.results.findMany({
             where: {
-                employee_id
+                employee:{
+                    userId:employee_id
+                }
+            },
+            include:{
+                test:{
+                    select:{
+                        name:true
+                    }
+                }
             }
         })
+        console.log(results)
         return results
+    }
+    async getWaitersList(){
+        const res =  await this.prisma.user.findMany({
+            where:{
+                employee: {
+                    isNot: null
+                }
+            },
+            select:{
+                id:true,
+                name:true,
+                employee:true
+            }
+        })
+        console.log(res)
+        return res
+    }
+    async getWaiterRes(employee_id:string, test_id:string){
+        return await this.prisma.results.findMany({
+            where:{
+                test_id:test_id,
+                employee_id,
+            },
+            include:{
+                test:{
+                select:{
+                    name:true
+                }
+                }
+            }
+        })
     }
 }

@@ -9,6 +9,7 @@ export class AuthController {
 
   @Post('register')
   register(@Body() body: Register) {
+    console.log(body)
     return this.authService.CreateUser(body.email, body.name, body.role);
   }
   @Post('login')
